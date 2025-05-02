@@ -48,7 +48,7 @@ The solution ensures that only verified users can access certain parts of your d
 1. Clone the repository:
    ```bash
    git clone https://github.com/AbdulAbdullah/Ern.git
-   cd <repository-name>
+   cd ern
    ```
 
 2. Install dependencies:
