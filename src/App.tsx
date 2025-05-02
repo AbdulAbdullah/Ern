@@ -48,44 +48,74 @@ function AuthContent() {
   }, [isConnected, connect, requestGatewayToken, address]);
 
   const getStatusMessage = () => {
-    if (isVerifying) return 'Verification in progress...';
+    if (isVerifying) return { text: 'Verification in progress...', type: 'info' };
     switch(gatewayStatus) {
       case GatewayStatus.ACTIVE:
-        return 'Waiting for wallet signature...';
+        return { text: 'Waiting for wallet signature...', type: 'info' };
       case GatewayStatus.ERROR:
-        return 'Verification failed';
+        return { text: 'Verification failed', type: 'error' };
       case GatewayStatus.UNKNOWN:
-        return 'Preparing verification...';
+        return { text: 'Preparing verification...', type: 'info' };
       default:
-        return '';
+        return null;
     }
   };
 
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  const status = getStatusMessage();
+
   return (
     <div className="auth-container">
-      <h1>Civic Auth Demo</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h1>Earn Global</h1>
+      <div className="welcome-message">
+        Welcome to Earn Global platform where you can earn by performing some quest.
+        {!isConnected && <div className="welcome-subtitle">Before we begin, sign in using your EVM wallet</div>}
+      </div>
+      {error && (
+        <div className="status-message error">
+          {error}
+        </div>
+      )}
       
       {!isConnected ? (
-        <button onClick={handleAuth}>Connect Wallet</button>
+        <button onClick={handleAuth}>
+          Connect Wallet
+        </button>
       ) : !gatewayToken ? (
         <>
-          <p>Connected Address: {address}</p>
+          <div className="address-display">
+            {formatAddress(address || '')}
+          </div>
           <button onClick={handleAuth} disabled={isVerifying}>
-            {isVerifying ? 'Verifying...' : 'Verify with Civic'}
+            {isVerifying ? (
+              <>
+                Verifying
+                <span className="loading"></span>
+              </>
+            ) : (
+              'Verify with Civic'
+            )}
           </button>
-          {getStatusMessage() && (
-            <p style={{ color: gatewayStatus === GatewayStatus.ERROR ? 'red' : 'inherit' }}>
-              {getStatusMessage()}
-            </p>
+          {status && (
+            <div className={`status-message ${status.type}`}>
+              {status.text}
+            </div>
           )}
         </>
       ) : (
-        <>
-          <p>✓ Verified Address: {address}</p>
-          <p>Gateway Token: {gatewayToken.toString()}</p>
+        <div className="verification-success">
+          <span className="checkmark">✓</span>
+          <div className="address-display">
+            {formatAddress(address || '')}
+          </div>
+          <div className="token-display">
+            Gateway Token: {gatewayToken.toString().slice(0, 10)}...
+          </div>
           <button onClick={disconnect}>Disconnect</button>
-        </>
+        </div>
       )}
     </div>
   );

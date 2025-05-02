@@ -47,7 +47,7 @@ The solution ensures that only verified users can access certain parts of your d
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/AbdulAbdullah/Ern.git
    cd <repository-name>
    ```
 
