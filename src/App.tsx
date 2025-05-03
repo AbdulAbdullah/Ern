@@ -1,131 +1,132 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { useGateway, GatewayStatus } from '@civic/ethereum-gateway-react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { ChakraProvider, Box, Heading, Text, Button, VStack, Container, useColorModeValue } from '@chakra-ui/react';
+import QuestList from './pages/QuestList';
 import './App.css';
 
 function AuthContent() {
   const { isConnected, address, connect, disconnect } = useAuth();
-  const { requestGatewayToken, gatewayStatus, gatewayToken } = useGateway() || {};
-  const [error, setError] = useState<string | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const navigate = useNavigate();
+  
+  const bgGradient = useColorModeValue(
+    'linear(to-br, purple.50, white)',
+    'linear(to-br, gray.900, purple.900)'
+  );
+  
+  const containerBg = useColorModeValue(
+    'whiteAlpha.900',
+    'whiteAlpha.100'
+  );
 
-  // Reset error when status changes
   useEffect(() => {
-    if (gatewayStatus) {
-      setError(null);
+    if (isConnected) {
+      navigate('/quests');
     }
-  }, [gatewayStatus]);
-
-  // Log status changes
-  useEffect(() => {
-    console.log('Gateway Status Changed:', { 
-      gatewayStatus,
-      hasToken: !!gatewayToken,
-      address
-    });
-  }, [gatewayStatus, gatewayToken, address]);
-
-  const handleAuth = useCallback(async () => {
-    try {
-      setError(null);
-      if (!isConnected) {
-        await connect();
-      } else if (requestGatewayToken) {
-        setIsVerifying(true);
-        console.log('Starting Civic verification...', { 
-          address,
-          isConnected,
-          hasRequestFunction: !!requestGatewayToken 
-        });
-        await requestGatewayToken();
-      }
-    } catch (err) {
-      console.error('Authentication error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to verify with Civic');
-    } finally {
-      setIsVerifying(false);
-    }
-  }, [isConnected, connect, requestGatewayToken, address]);
-
-  const getStatusMessage = () => {
-    if (isVerifying) return { text: 'Verification in progress...', type: 'info' };
-    switch(gatewayStatus) {
-      case GatewayStatus.ACTIVE:
-        return { text: 'Waiting for wallet signature...', type: 'info' };
-      case GatewayStatus.ERROR:
-        return { text: 'Verification failed', type: 'error' };
-      case GatewayStatus.UNKNOWN:
-        return { text: 'Preparing verification...', type: 'info' };
-      default:
-        return null;
-    }
-  };
+  }, [isConnected, navigate]);
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  const status = getStatusMessage();
-
   return (
-    <div className="auth-container">
-      <h1>Earn Global</h1>
-      <div className="welcome-message">
-        Welcome to Earn Global platform where you can earn by performing some quest.
-        {!isConnected && <div className="welcome-subtitle">Before we begin, sign in using your EVM wallet</div>}
-      </div>
-      {error && (
-        <div className="status-message error">
-          {error}
-        </div>
-      )}
-      
-      {!isConnected ? (
-        <button onClick={handleAuth}>
-          Connect Wallet
-        </button>
-      ) : !gatewayToken ? (
-        <>
-          <div className="address-display">
-            {formatAddress(address || '')}
-          </div>
-          <button onClick={handleAuth} disabled={isVerifying}>
-            {isVerifying ? (
-              <>
-                Verifying
-                <span className="loading"></span>
-              </>
-            ) : (
-              'Verify with Civic'
+    <Box minH="100vh" bgGradient={bgGradient} py={8}>
+      <Container maxW="container.md">
+        <VStack
+          spacing={6}
+          bg={containerBg}
+          backdropFilter="blur(10px)"
+          borderRadius="xl"
+          p={8}
+          boxShadow="xl"
+        >
+          <Heading 
+            as="h1" 
+            size="xl"
+            bgGradient="linear(to-r, purple.400, purple.600)"
+            bgClip="text"
+          >
+            Earn Global
+          </Heading>
+          
+          <Text fontSize="lg" textAlign="center" opacity={0.9}>
+            Welcome to Earn Global platform where you can earn by performing some quest.
+            {!isConnected && (
+              <Text fontSize="md" mt={2} fontStyle="italic" opacity={0.7}>
+                Connect your wallet to start earning
+              </Text>
             )}
-          </button>
-          {status && (
-            <div className={`status-message ${status.type}`}>
-              {status.text}
-            </div>
+          </Text>
+
+          {!isConnected ? (
+            <Button
+              colorScheme="purple"
+              size="lg"
+              onClick={connect}
+              w="full"
+              maxW="sm"
+            >
+              Connect Wallet
+            </Button>
+          ) : (
+            <VStack spacing={4} w="full">
+              <Box
+                bg="whiteAlpha.200"
+                p={3}
+                borderRadius="md"
+                fontFamily="mono"
+                fontSize="sm"
+                w="full"
+                textAlign="center"
+              >
+                {formatAddress(address || '')}
+              </Box>
+              <Button
+                colorScheme="purple"
+                variant="outline"
+                onClick={disconnect}
+                w="full"
+                maxW="sm"
+              >
+                Disconnect
+              </Button>
+            </VStack>
           )}
-        </>
-      ) : (
-        <div className="verification-success">
-          <span className="checkmark">✓</span>
-          <div className="address-display">
-            {formatAddress(address || '')}
-          </div>
-          <div className="token-display">
-            Gateway Token: {gatewayToken.toString().slice(0, 10)}...
-          </div>
-          <button onClick={disconnect}>Disconnect</button>
-        </div>
-      )}
-    </div>
+        </VStack>
+      </Container>
+    </Box>
   );
+}
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isConnected } = useAuth();
+  
+  if (!isConnected) {
+    return <Navigate to="/" />;
+  }
+  
+  return <>{children}</>;
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <AuthContent />
-    </AuthProvider>
+    <Router>
+      <ChakraProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<AuthContent />} />
+            <Route 
+              path="/quests" 
+              element={
+                <ProtectedRoute>
+                  <QuestList />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </AuthProvider>
+      </ChakraProvider>
+    </Router>
   );
 }
 

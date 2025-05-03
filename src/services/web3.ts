@@ -9,6 +9,12 @@ export const web3onboard = init({
   wallets: [injected],
   chains: [
     {
+      id: '0x2105', // 8453 in hex
+      token: 'ETH',
+      label: 'Base',
+      rpcUrl: 'https://mainnet.base.org'
+    },
+    {
       id: '0x5',
       token: 'ETH',
       label: 'Goerli',

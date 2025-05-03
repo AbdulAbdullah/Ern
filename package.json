@@ -10,15 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/theme": "^3.4.6",
     "@civic/auth-web3": "^0.5.5",
     "@civic/ethereum-gateway-react": "^1.4.7",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@web3-onboard/core": "^2.24.1",
     "@web3-onboard/injected-wallets": "^2.11.3",
     "@web3-onboard/react": "^2.11.0",
     "ethers": "^6.13.7",
+    "framer-motion": "^6.5.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^7.5.3",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5"
   },

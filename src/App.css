@@ -46,10 +46,10 @@
   margin: 40px auto;
   padding: 2.5rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(26, 32, 44, 0.8);
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -106,7 +106,7 @@
 }
 
 button {
-  background: linear-gradient(45deg, #646cff, #8f96ff);
+  background: linear-gradient(45deg, #4c51bf, #6b46c1);
   color: white;
   padding: 0.8rem 1.5rem;
   margin: 1rem 0;
@@ -117,11 +117,13 @@ button {
   font-weight: 600;
   transition: all 0.3s ease;
   min-width: 200px;
+  box-shadow: 0 2px 10px rgba(107, 70, 193, 0.2);
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(100, 108, 255, 0.4);
+  box-shadow: 0 5px 15px rgba(107, 70, 193, 0.4);
+  background: linear-gradient(45deg, #5a5fcf, #805ad5);
 }
 
 button:active {
@@ -129,10 +131,11 @@ button:active {
 }
 
 button:disabled {
-  background: #666;
+  background: #4a5568;
   cursor: not-allowed;
   transform: none;
   opacity: 0.7;
+  box-shadow: none;
 }
 
 .verification-success {
@@ -187,12 +190,41 @@ p {
   margin: 0 auto 2rem;
   font-size: 1.2rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .welcome-subtitle {
   margin-top: 1rem;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
   font-style: italic;
+}
+
+@media (prefers-color-scheme: light) {
+  .auth-container {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  button {
+    background: linear-gradient(45deg, #4c51bf, #6b46c1);
+    color: white !important;
+  }
+  
+  button:hover {
+    background: linear-gradient(45deg, #5a5fcf, #805ad5);
+  }
+  
+  button:disabled {
+    background: #cbd5e0;
+    color: #4a5568 !important;
+  }
+  
+  .welcome-message {
+    color: #2d3748;
+  }
+  
+  .welcome-subtitle {
+    color: #4a5568;
+  }
 }
